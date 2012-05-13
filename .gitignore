@@ -1,0 +1,16 @@
+# Python compiled files #
+#########################
+*.pyc
+
+# OS generated files #
+######################
+*~
+*.lock
+*.swp
+*.out
+.DS_Store
+
+# IDE generated files #
+#######################
+.idea/
+
