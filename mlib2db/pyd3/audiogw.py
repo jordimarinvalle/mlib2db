@@ -41,7 +41,8 @@ class AudioGw():
 
         :return: dictionary
         """
-        return {'length': self.get_length(),
+        return {
+            'length': self.get_length(),
             'bitrate': self.get_bitrate(),
             'version': self.get_version(),
             'layer': self.get_layer(),
@@ -92,10 +93,11 @@ class AudioGw():
 
 
     def get_mode(self):
-        options = {0: "Stereo",
-                   1: "Joint Stereo",
-                   2: "Dual Channel",
-                   3: "Mono",
+        options = {
+            0: "Stereo",
+            1: "Joint Stereo",
+            2: "Dual Channel",
+            3: "Mono",
         }
         return options.get(self.audio.info.mode, "Unknown Mode")
 

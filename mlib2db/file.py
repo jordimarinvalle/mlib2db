@@ -40,12 +40,13 @@ class File():
 
 
     def set_info(self, f):
-        self.info = {'name': os.path.basename(f),
-                     'path': os.path.dirname(f),
-                     'size': os.path.getsize(f),
-                     'mime': mimetypes.guess_type(f)[0],
-                     'ext': os.path.splitext(f)[1][1:],
-                     'type': File.get_file_type(File.get_mimetype(f))
+        self.info = {
+            'name': os.path.basename(f),
+            'path': os.path.dirname(f),
+            'size': os.path.getsize(f),
+            'mime': mimetypes.guess_type(f)[0],
+            'ext': os.path.splitext(f)[1][1:],
+            'type': File.get_file_type(File.get_mimetype(f)),
         }
 
 

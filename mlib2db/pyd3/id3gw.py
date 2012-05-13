@@ -51,7 +51,8 @@ class Id3Gw():
 
         :return: dictionary with basic ID3 data such as trackn, album, artist, title, genre, year, comment, band.
         """
-        return {'trackn': self.get_trackn(),
+        return {
+            'trackn': self.get_trackn(),
             'album': self.get_album(),
             'artist': self.get_artist(),
             'title': self.get_title(),
