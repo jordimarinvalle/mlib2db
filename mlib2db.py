@@ -10,6 +10,8 @@ from mlib2db.file import File
 from mlib2db.tune import Tune
 from mlib2db.image import Image
 
+from mlib2db.slugify import slugify
+
 try:
     mlib_path, i_path = unicode(sys.argv[1]), unicode(sys.argv[2])
     if not os.path.exists(mlib_path) or not i_path: raise OSError()
@@ -42,6 +44,9 @@ for (path, dirs, files) in os.walk(mlib_path):
     for tune in tunes:
         flat_d = tune.flat_d(tune.get_id3(), flat_d)
     print flat_d
+
+    if len(flat_d['album']) is not 1: continue #@todo log {{path}}...
+    raw_input("album key: %s" %(slugify(flat_d['album'][0])))
 
     do_debug = raw_input("Check tunes and images?: ")
     if not do_debug: continue
