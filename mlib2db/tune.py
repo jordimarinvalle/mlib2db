@@ -35,8 +35,6 @@ class Tune(File):
 
     def flat_d(self, d, flat_d):
         for key, value in d.iteritems():
-            if not value: continue
-
             if not flat_d.has_key(key):
                 flat_d[key] = [value,]
             elif value not in flat_d[key]:
