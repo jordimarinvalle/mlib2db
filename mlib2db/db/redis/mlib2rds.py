@@ -43,12 +43,12 @@ class Album(Albums, Tunes, Images):
         return Album.separator.join([Album.album_key, slugify(album)])
 
     @staticmethod
-    def get_tunes_key(album):
-        return Album.separator.join([Album.get_key(album), Album.tunes_key])
+    def get_tunes_key(album_key):
+        return Album.separator.join([album_key, Album.tunes_key])
 
     @staticmethod
-    def get_images_key(album):
-        return Album.separator.join([Album.get_key(album), Album.images_key])
+    def get_images_key(album_key):
+        return Album.separator.join([album_key, Album.images_key])
 
 
 class Tune(Tunes):
@@ -65,13 +65,9 @@ class Tune(Tunes):
         )
 
     @staticmethod
-    def get_id3_key(album, title, artist):
-        return Tune.separator.join(
-            [Tune.get_key(album, title, artist), Tune.id3_key]
-        )
+    def get_id3_key(tune_key):
+        return Tune.separator.join([tune_key, Tune.id3_key])
 
     @staticmethod
-    def get_audio_key(album, title, artist):
-        return Tune.separator.join(
-            [Tune.get_key(album, title, artist), Tune.audio_key]
-        )
+    def get_audio_key(tune_key):
+        return Tune.separator.join([tune_key, Tune.audio_key])
