@@ -8,6 +8,8 @@ from mlib2db.file import File
 
 class Image(File):
 
+    UNDEFINED_TYPE = 'undefined'
+
     THUMB_DEFAULT_DIMX = 150
     THUMB_DEFAULT_DIMY = 150
 
@@ -43,17 +45,16 @@ class Image(File):
 
 
     def get_undefined_type(self):
-        return 'undefined'
+        return self.UNDEFINED_TYPE
 
 
     def set_type(self, f):
-        type = self.get_undefined_type()
+        self.type = self.get_undefined_type()
         filename = os.path.basename(os.path.splitext(f)[0])
-        types = self.get_types_from_a_filename()
-        for type, filenames  in types.items():
+        for type, filenames  in self.get_types_from_a_filename().items():
             if filename in filenames:
+                self.type = type
                 break
-        self.type = type
 
 
     def get_type(self):
