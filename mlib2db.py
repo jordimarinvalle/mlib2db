@@ -63,8 +63,8 @@ for (path, dirs, files) in os.walk(mlib_path):
 
 
     album_key = RdsAlbum.get_key(flat_d['album'][0])
-    album_tunes_key = RdsAlbum.get_tunes_key(flat_d['album'][0])
-    album_images_key = RdsAlbum.get_images_key(flat_d['album'][0])
+    album_tunes_key = RdsAlbum.get_tunes_key(album_key)
+    album_images_key = RdsAlbum.get_images_key(album_key)
 
     print "album_key: %s" %(album_key,)
     print "album_tunes_key: %s" %(album_tunes_key,)
@@ -81,8 +81,8 @@ for (path, dirs, files) in os.walk(mlib_path):
 
 
         tune_key = RdsTune.get_key(album, title, artist)
-        tune_id3_key = RdsTune.get_id3_key(album, title, artist)
-        tune_audio_key = RdsTune.get_audio_key(album, title, artist)
+        tune_id3_key = RdsTune.get_id3_key(tune_key)
+        tune_audio_key = RdsTune.get_audio_key(tune_key)
 
         print "tune_key: %s" %(tune_key,)
         print "tune_key_id3: %s" %(tune_id3_key,)
