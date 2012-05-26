@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-import PIL.Image as pil
+import PIL.Image as Pil
 
+from slugify import slugify
 from mlib2db.file import File
 
 class Image(File):
@@ -12,8 +13,9 @@ class Image(File):
 
     THUMB_DEFAULT_DIMX = 150
     THUMB_DEFAULT_DIMY = 150
+    THUMB_FILENAME_KEY = 'thumb'
 
-    dims = ()
+    dims = {'x': None, 'y': None}
     type = ''
 
     thumb = None
@@ -25,7 +27,16 @@ class Image(File):
 
 
     def set_dims(self, f):
-        self.dims = pil.open(f).size
+        dims = Pil.open(f).size
+        self.set_dimx(dims[0])
+        self.set_dimy(dims[1])
+
+    def set_dimx(self, x):
+        self.dims['x'] = x
+
+
+    def set_dimy(self, y):
+        self.dims['y'] = y
 
 
     def get_dims(self):
@@ -33,11 +44,11 @@ class Image(File):
 
 
     def get_dimx(self):
-        return self.dims[0]
+        return self.dims['x']
 
 
     def get_dimy(self):
-        return self.dims[1]
+        return self.dims['y']
 
 
     def get_types_from_a_filename(self):
@@ -61,6 +72,18 @@ class Image(File):
         return self.type
 
 
+    def get_filename_id(self, i, d):
+        return '.'.join([slugify('-'.join([i, d])), self.get_info_ext()])
+
+
+    def get_filename_thumb_key(self):
+        return self.THUMB_FILENAME_KEY
+
+
+    def get_filename_thumb_id(self, i, d):
+        return '.'.join([slugify('-'.join([i, d, self.get_filename_thumb_key()])), self.get_info_ext()])
+
+
     def is_a_square_image(self):
         if (float(self.get_dimx())/float(self.get_dimy()) == 1):
             return True
@@ -74,8 +97,8 @@ class Image(File):
     def set_thumb(self, dims, type='NEAREST'):
         try:
             if dims is (): dims = self.get_thumb_default_dims()
-            image = pil.open(self.get_file())
-            return image.resize(dims[0], dims[1], pil.type)
+            image = Pil.open(self.get_file())
+            return image.resize(dims[0], dims[1], Pil.type)
         except:
             raise ThumbException ()
 

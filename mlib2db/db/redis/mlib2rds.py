@@ -71,3 +71,32 @@ class Tune(Tunes):
     @staticmethod
     def get_audio_key(tune_key):
         return Tune.separator.join([tune_key, Tune.audio_key])
+
+class Image(Images):
+
+    image_key = 'image'
+
+    filenameid_key = 'filenameid'
+    type_key = 'type'
+    dims_key = 'dims'
+    thumbs_key = 'thumbs'
+
+    @staticmethod
+    def get_key(album, type):
+        return Image.separator.join([Image.image_key, '.'.join([slugify(album), slugify(type)])])
+
+    @staticmethod
+    def get_filenameid_key(image_key):
+        return Image.separator.join([image_key, Image.filenameid_key])
+
+    @staticmethod
+    def get_type_key(image_key):
+        return Image.separator.join([image_key, Image.type_key])
+
+    @staticmethod
+    def get_dims_key(image_key):
+        return Image.separator.join([image_key, Image.dims_key])
+
+    @staticmethod
+    def get_thumbs_key(image_key):
+        return Image.separator.join([image_key, Image.thumbs_key])

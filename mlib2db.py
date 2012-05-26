@@ -12,7 +12,8 @@ from mlib2db.file import File
 from mlib2db.tune import Tune
 from mlib2db.image import Image
 
-from mlib2db.db.redis.mlib2rds import Albums as RdsAlbums, Album as RdsAlbum, Tunes as RdsTunes, Tune as RdsTune
+from mlib2db.db.redis.mlib2rds import Albums as RdsAlbums, Album as RdsAlbum, \
+    Tunes as RdsTunes, Tune as RdsTune, Images as RdsImages, Image as RdsImage
 
 try:
     mlib_path, i_path = unicode(sys.argv[1]), unicode(sys.argv[2])
@@ -32,6 +33,8 @@ except (Exception):
         Redis db connection failed. Check Redis db connection settings.
     """))
 
+tunes_key = RdsTunes.get_key()
+images_key = RdsImages.get_key()
 albums_key = RdsAlbums.get_key()
 
 print "albums_key: %s" %(albums_key,)
@@ -71,7 +74,7 @@ for (path, dirs, files) in os.walk(mlib_path):
     print "album_images_key: %s" %(album_images_key,)
     raw_input("")
 
-    #redis.set(albums_key, album_key)
+    #redis.sadd(albums_key, album_key)
 
 
     for tune in tunes:
@@ -79,26 +82,57 @@ for (path, dirs, files) in os.walk(mlib_path):
         album, title, artist = tune.id3gw.get_album(), tune.id3gw.get_title(), tune.id3gw.get_artist()
         if not album or not title or not artist: continue #@todo log {{path}}...
 
-
         tune_key = RdsTune.get_key(album, title, artist)
         tune_id3_key = RdsTune.get_id3_key(tune_key)
         tune_audio_key = RdsTune.get_audio_key(tune_key)
 
         print "tune_key: %s" %(tune_key,)
-        print "tune_key_id3: %s" %(tune_id3_key,)
-        print "tune_audio_id3: %s" %(tune_audio_key,)
-        raw_input("")
+        print "tune_id3_key: %s" %(tune_id3_key,)
+        print "tune_audio_key: %s" %(tune_audio_key,)
 
         #for key, value in tune.get_id3().iteritems():
         #    redis.hset(tune_id3_key, key, value)
 
         #redis.zadd(album_tunes_key, tune_key, tune.id3gw.get_trackn())
 
+        #redis.sadd(tunes_key, tune_key) #track and add all tunes
+
+
     raw_input("")
 
+
     for image in images:
+
+        if image.get_type() is image.get_undefined_type(): continue
+
+        image_key = RdsImage.get_key(flat_d['album'][0], image.get_type())
+        image_filenameid_key = RdsImage.get_filenameid_key(image_key)
+        image_type_key = RdsImage.get_type_key(image_key)
+        image_dims_key = RdsImage.get_dims_key(image_key)
+
+        print "image_key: %s" %(image_key,)
+        print "image_filenameid_key: %s" %(image_filenameid_key,)
+        print "image_type_key: %s" %(image_type_key,)
+        print "image_dims_key: %s" %(image_dims_key,)
+
+        image_filenameid = image.get_filename_id(flat_d['album'][0], image.get_type())
+        print "image_filenameid: %s" %(image_filenameid,)
+
+        #redis.sadd(album_images_key, image_key)
+
+        #redis.sadd(images_key, image_key) #track and add all images
+
+        #redis.set(image_filenameid_key, image_filenameid)
+        #redis.set(image_type_key, image.get_type())
+        #for key, value in image.get_dims().iteritems():
+        #    redis.hset(image_dims_key, key, value)
+
+        #image_thumbs_key = RdsImage.get_thumbs_key(image_key)
+        #print "image_thumbs_key: %s" %(image_thumbs_key,)
+        #sorted set (thumbs)
+
         #raw_input(image.get_info())
         #raw_input(image.get_dims())
         #raw_input(image.get_type())
-        pass
 
+    raw_input("")
