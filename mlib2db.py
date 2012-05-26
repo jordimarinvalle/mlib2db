@@ -46,7 +46,7 @@ for (path, dirs, files) in os.walk(mlib_path):
     tunes = []
     images = []
     for f in files:
-        file_type = File.get_file_type(File.get_mimetype(f))
+        file_type = File.get_mlibfile_type(File.get_mimetype(f))
 
         if file_type is 'audio':
             tunes.append(Tune(f))
@@ -131,7 +131,7 @@ for (path, dirs, files) in os.walk(mlib_path):
         #print "image_thumbs_key: %s" %(image_thumbs_key,)
         #sorted set (thumbs)
 
-        #raw_input(image.get_info())
+        #raw_input(image.get_file())
         #raw_input(image.get_dims())
         #raw_input(image.get_type())
 

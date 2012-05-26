@@ -12,7 +12,7 @@ class Tune(File):
     audiogw = None
 
     def __init__(self, f):
-        self.set_info(f)
+        self.set_file(f)
         self.set_audio(f)
         self.set_id3(f)
 

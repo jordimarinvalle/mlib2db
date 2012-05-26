@@ -7,11 +7,11 @@ import mimetypes
 class File():
 
     f = ''
-    info = {}
+    file = {}
 
     def __init__(self, f):
         self.f = f
-        self.set_info(f)
+        self.set_file(f)
 
     @staticmethod
     def get_mimetype(f):
@@ -29,51 +29,51 @@ class File():
 
 
     @staticmethod
-    def get_file_type(mimetype):
+    def get_mlibfile_type(mimetype):
         if mimetype in File.get_audio_allowed_mimetypes(): return 'audio'
         if mimetype in File.get_image_allowed_mimetypes(): return 'image'
         return 'unknown'
 
 
-    def get_file(self):
+    def get_f(self):
         return self.f
 
 
-    def set_info(self, f):
-        self.info = {
+    def set_file(self, f):
+        self.file = {
             'name': os.path.basename(f),
             'path': os.path.dirname(f),
             'size': os.path.getsize(f),
             'mime': mimetypes.guess_type(f)[0],
             'ext': os.path.splitext(f)[1][1:],
-            'type': File.get_file_type(File.get_mimetype(f)),
+            'type': File.get_mlibfile_type(File.get_mimetype(f)),
         }
 
 
-    def get_info(self):
-        return self.info
+    def get_file(self):
+        return self.file
 
 
-    def get_info_name(self):
-        return self.info['name']
+    def get_file_name(self):
+        return self.file['name']
 
 
-    def get_info_path(self):
-        return self.info['path']
+    def get_file_path(self):
+        return self.file['path']
 
 
-    def get_info_size(self):
-        return self.info['size']
+    def get_file_size(self):
+        return self.file['size']
 
 
-    def get_info_mime(self):
-        return self.info['mime']
+    def get_file_mime(self):
+        return self.file['mime']
 
 
-    def get_info_ext(self):
-        return self.info['ext']
+    def get_file_ext(self):
+        return self.file['ext']
 
 
-    def get_info_type(self):
-        return self.info['type']
+    def get_file_type(self):
+        return self.file['type']
 
