@@ -37,8 +37,8 @@ tunes_key = RdsTunes.get_key()
 images_key = RdsImages.get_key()
 albums_key = RdsAlbums.get_key()
 
-print "albums_key: %s" %(albums_key,)
-raw_input("")
+#print "albums_key: %s" %(albums_key,)
+#raw_input("")
 
 for (path, dirs, files) in os.walk(mlib_path):
     files = [os.path.join(path, f) for f in files]
@@ -69,12 +69,12 @@ for (path, dirs, files) in os.walk(mlib_path):
     album_tunes_key = RdsAlbum.get_tunes_key(album_key)
     album_images_key = RdsAlbum.get_images_key(album_key)
 
-    print "album_key: %s" %(album_key,)
-    print "album_tunes_key: %s" %(album_tunes_key,)
-    print "album_images_key: %s" %(album_images_key,)
-    raw_input("")
+    #print "album_key: %s" %(album_key,)
+    #print "album_tunes_key: %s" %(album_tunes_key,)
+    #print "album_images_key: %s" %(album_images_key,)
+    #raw_input("")
 
-    #redis.sadd(albums_key, album_key)
+    redis.sadd(albums_key, album_key)
 
 
     for tune in tunes:
@@ -86,19 +86,19 @@ for (path, dirs, files) in os.walk(mlib_path):
         tune_id3_key = RdsTune.get_id3_key(tune_key)
         tune_audio_key = RdsTune.get_audio_key(tune_key)
 
-        print "tune_key: %s" %(tune_key,)
-        print "tune_id3_key: %s" %(tune_id3_key,)
-        print "tune_audio_key: %s" %(tune_audio_key,)
+        #print "tune_key: %s" %(tune_key,)
+        #print "tune_id3_key: %s" %(tune_id3_key,)
+        #print "tune_audio_key: %s" %(tune_audio_key,)
 
-        #for key, value in tune.get_id3().iteritems():
-        #    redis.hset(tune_id3_key, key, value)
+        for key, value in tune.get_id3().iteritems():
+            redis.hset(tune_id3_key, key, value)
 
-        #redis.zadd(album_tunes_key, tune_key, tune.id3gw.get_trackn())
+        redis.zadd(album_tunes_key, tune_key, tune.id3gw.get_trackn())
 
-        #redis.sadd(tunes_key, tune_key) #track and add all tunes
+        redis.sadd(tunes_key, tune_key) #track and add all tunes
 
 
-    raw_input("")
+    #raw_input("")
 
 
     for image in images:
@@ -110,22 +110,22 @@ for (path, dirs, files) in os.walk(mlib_path):
         image_type_key = RdsImage.get_type_key(image_key)
         image_dims_key = RdsImage.get_dims_key(image_key)
 
-        print "image_key: %s" %(image_key,)
-        print "image_filenameid_key: %s" %(image_filenameid_key,)
-        print "image_type_key: %s" %(image_type_key,)
-        print "image_dims_key: %s" %(image_dims_key,)
+        #print "image_key: %s" %(image_key,)
+        #print "image_filenameid_key: %s" %(image_filenameid_key,)
+        #print "image_type_key: %s" %(image_type_key,)
+        #print "image_dims_key: %s" %(image_dims_key,)
 
         image_filenameid = image.get_filename_id(flat_d['album'][0], image.get_type())
-        print "image_filenameid: %s" %(image_filenameid,)
+        #print "image_filenameid: %s" %(image_filenameid,)
 
-        #redis.sadd(album_images_key, image_key)
+        redis.sadd(album_images_key, image_key)
 
-        #redis.sadd(images_key, image_key) #track and add all images
+        redis.sadd(images_key, image_key) #track and add all images
 
-        #redis.set(image_filenameid_key, image_filenameid)
-        #redis.set(image_type_key, image.get_type())
-        #for key, value in image.get_dims().iteritems():
-        #    redis.hset(image_dims_key, key, value)
+        redis.set(image_filenameid_key, image_filenameid)
+        redis.set(image_type_key, image.get_type())
+        for key, value in image.get_dims().iteritems():
+            redis.hset(image_dims_key, key, value)
 
         #image_thumbs_key = RdsImage.get_thumbs_key(image_key)
         #print "image_thumbs_key: %s" %(image_thumbs_key,)
@@ -135,4 +135,10 @@ for (path, dirs, files) in os.walk(mlib_path):
         #raw_input(image.get_dims())
         #raw_input(image.get_type())
 
-    raw_input("")
+    #raw_input("")
+
+albums_keys = redis.smembers(albums_key)
+tunes_keys = redis.smembers(tunes_key)
+images_keys = redis.smembers(images_key)
+
+print "On Redis DB are: %s albums, %s tunes, %s images" %(len(albums_keys), len(tunes_keys), len(images_keys))
