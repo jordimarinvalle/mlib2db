@@ -63,7 +63,7 @@ class Id3Gw():
         }
 
 
-    def set_track_number(self, value):
+    def set_trackn(self, value):
         """
         TRCK Track number/Position.
 
