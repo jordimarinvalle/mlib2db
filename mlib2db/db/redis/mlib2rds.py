@@ -39,8 +39,10 @@ class Album(Albums, Tunes, Images):
     album_key = 'album'
 
     @staticmethod
-    def get_key(album):
-        return Album.separator.join([Album.album_key, slugify(album)])
+    def get_key(artist, album):
+        return Album.separator.join(
+            [Album.album_key, '.'.join([slugify(artist), slugify(album)])]
+        )
 
     @staticmethod
     def get_tunes_key(album_key):

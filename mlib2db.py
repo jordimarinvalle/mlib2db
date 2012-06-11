@@ -64,8 +64,10 @@ for (path, dirs, files) in os.walk(mlib_path):
 
     if len(flat_d['album']) is not 1: continue #@todo log {{path}}...
 
+    album = flat_d['album'][0]
+    artist = 'va' if len(flat_d['artist']) is not 1 else flat_d['artist'][0]
 
-    album_key = RdsAlbum.get_key(flat_d['album'][0])
+    album_key = RdsAlbum.get_key(artist, album)
     album_tunes_key = RdsAlbum.get_tunes_key(album_key)
     album_images_key = RdsAlbum.get_images_key(album_key)
 
