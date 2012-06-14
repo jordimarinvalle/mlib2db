@@ -21,7 +21,7 @@ class Image(File):
     thumb = None
 
     def __init__(self, f):
-        self.set_file(f)
+        File.__init__(self, f)
         self.set_dims(f)
         self.set_type(f)
 
@@ -72,8 +72,8 @@ class Image(File):
         return self.type
 
 
-    def get_filename_id(self, i, d):
-        return '.'.join([slugify('-'.join([i, d])), self.get_file_ext()])
+    def get_filename_id(self, (artist, album), type):
+        return '.'.join([slugify('-'.join([artist, album, type])), self.get_file_ext()])
 
 
     def get_filename_thumb_key(self):

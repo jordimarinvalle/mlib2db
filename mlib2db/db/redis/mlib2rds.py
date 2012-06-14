@@ -38,11 +38,22 @@ class Album(Albums, Tunes, Images):
 
     album_key = 'album'
 
+    id3_key = 'id3'
+    audio_key = 'audio'
+
     @staticmethod
     def get_key(artist, album):
         return Album.separator.join(
             [Album.album_key, '.'.join([slugify(artist), slugify(album)])]
         )
+
+    @staticmethod
+    def get_id3_key(album_key):
+        return Album.separator.join([album_key, Album.id3_key])
+
+    @staticmethod
+    def get_audio_key(album_key):
+        return Album.separator.join([album_key, Album.audio_key])
 
     @staticmethod
     def get_tunes_key(album_key):
@@ -84,8 +95,8 @@ class Image(Images):
     thumbs_key = 'thumbs'
 
     @staticmethod
-    def get_key(album, type):
-        return Image.separator.join([Image.image_key, '.'.join([slugify(album), slugify(type)])])
+    def get_key(artist, album, type):
+        return Image.separator.join([Image.image_key, '.'.join([slugify(artist), slugify(album), slugify(type)])])
 
     @staticmethod
     def get_filenameid_key(image_key):

@@ -3,6 +3,7 @@
 
 import os
 import sys
+import shutil
 
 import redis
 
@@ -16,8 +17,9 @@ from mlib2db.db.redis.mlib2rds import Albums as RdsAlbums, Album as RdsAlbum, \
     Tunes as RdsTunes, Tune as RdsTune, Images as RdsImages, Image as RdsImage
 
 try:
-    mlib_path, i_path = unicode(sys.argv[1]), unicode(sys.argv[2])
-    if not os.path.exists(mlib_path) or not i_path: raise OSError()
+    #mlit_path: music-library-tunes-path #mlii_path: music-library-images-path
+    mlit_path, mlii_path = unicode(sys.argv[1]), unicode(sys.argv[2])
+    if not os.path.exists(mlit_path) or not mlii_path: raise OSError()
 except (IndexError, OSError):
     sys.exit(dedent("""\
         __ARGUMENTS_REQUIRED__
@@ -37,10 +39,7 @@ tunes_key = RdsTunes.get_key()
 images_key = RdsImages.get_key()
 albums_key = RdsAlbums.get_key()
 
-#print "albums_key: %s" %(albums_key,)
-#raw_input("")
-
-for (path, dirs, files) in os.walk(mlib_path):
+for (path, dirs, files) in os.walk(mlit_path):
     files = [os.path.join(path, f) for f in files]
 
     tunes = []
@@ -64,17 +63,21 @@ for (path, dirs, files) in os.walk(mlib_path):
 
     if len(flat_d['album']) is not 1: continue #@todo log {{path}}...
 
-    album = flat_d['album'][0]
-    artist = 'va' if len(flat_d['artist']) is not 1 else flat_d['artist'][0]
+    album   = flat_d['album'][0]
+    artist  = 'va' if len(flat_d['artist']) is not 1 else flat_d['artist'][0]
+    genre   = '' if len(flat_d['genre']) is not 1 else flat_d['genre'][0]
+    year    = '' if len(flat_d['year']) is not 1 else flat_d['year'][0]
+
+    album_id3 = {'album': album, 'artist': artist, 'genre': genre, 'year': year}
 
     album_key = RdsAlbum.get_key(artist, album)
+    album_id3_key = RdsAlbum.get_id3_key(album_key)
+    for key, value in tune.get_id3().iteritems():
+        redis.hset(album_id3_key, key, value)
+
+
     album_tunes_key = RdsAlbum.get_tunes_key(album_key)
     album_images_key = RdsAlbum.get_images_key(album_key)
-
-    #print "album_key: %s" %(album_key,)
-    #print "album_tunes_key: %s" %(album_tunes_key,)
-    #print "album_images_key: %s" %(album_images_key,)
-    #raw_input("")
 
     redis.sadd(albums_key, album_key)
 
@@ -88,37 +91,23 @@ for (path, dirs, files) in os.walk(mlib_path):
         tune_id3_key = RdsTune.get_id3_key(tune_key)
         tune_audio_key = RdsTune.get_audio_key(tune_key)
 
-        #print "tune_key: %s" %(tune_key,)
-        #print "tune_id3_key: %s" %(tune_id3_key,)
-        #print "tune_audio_key: %s" %(tune_audio_key,)
-
         for key, value in tune.get_id3().iteritems():
             redis.hset(tune_id3_key, key, value)
 
         redis.zadd(album_tunes_key, tune_key, tune.id3gw.get_trackn())
-
         redis.sadd(tunes_key, tune_key) #track and add all tunes
-
-
-    #raw_input("")
 
 
     for image in images:
 
         if image.get_type() is image.get_undefined_type(): continue
 
-        image_key = RdsImage.get_key(flat_d['album'][0], image.get_type())
+        image_key = RdsImage.get_key(artist, album, image.get_type())
         image_filenameid_key = RdsImage.get_filenameid_key(image_key)
         image_type_key = RdsImage.get_type_key(image_key)
         image_dims_key = RdsImage.get_dims_key(image_key)
 
-        #print "image_key: %s" %(image_key,)
-        #print "image_filenameid_key: %s" %(image_filenameid_key,)
-        #print "image_type_key: %s" %(image_type_key,)
-        #print "image_dims_key: %s" %(image_dims_key,)
-
-        image_filenameid = image.get_filename_id(flat_d['album'][0], image.get_type())
-        #print "image_filenameid: %s" %(image_filenameid,)
+        image_filenameid = image.get_filename_id((album_id3['artist'], album_id3['album']), image.get_type())
 
         redis.sadd(album_images_key, image_key)
 
@@ -129,15 +118,7 @@ for (path, dirs, files) in os.walk(mlib_path):
         for key, value in image.get_dims().iteritems():
             redis.hset(image_dims_key, key, value)
 
-        #image_thumbs_key = RdsImage.get_thumbs_key(image_key)
-        #print "image_thumbs_key: %s" %(image_thumbs_key,)
-        #sorted set (thumbs)
-
-        #raw_input(image.get_file())
-        #raw_input(image.get_dims())
-        #raw_input(image.get_type())
-
-    #raw_input("")
+        shutil.copyfile(image.get_f(), os.path.join(mlii_path, image_filenameid))
 
 albums_keys = redis.smembers(albums_key)
 tunes_keys = redis.smembers(tunes_key)
