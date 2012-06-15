@@ -64,7 +64,7 @@ for (path, dirs, files) in os.walk(mlit_path):
     if len(flat_d['album']) is not 1: continue #@todo log {{path}}...
 
     album   = flat_d['album'][0]
-    artist  = 'va' if len(flat_d['artist']) is not 1 else flat_d['artist'][0]
+    artist  = 'VA' if len(flat_d['artist']) is not 1 else flat_d['artist'][0]
     genre   = '' if len(flat_d['genre']) is not 1 else flat_d['genre'][0]
     year    = '' if len(flat_d['year']) is not 1 else flat_d['year'][0]
 
@@ -72,7 +72,7 @@ for (path, dirs, files) in os.walk(mlit_path):
 
     album_key = RdsAlbum.get_key(artist, album)
     album_id3_key = RdsAlbum.get_id3_key(album_key)
-    for key, value in tune.get_id3().iteritems():
+    for key, value in album_id3.iteritems():
         redis.hset(album_id3_key, key, value)
 
 
