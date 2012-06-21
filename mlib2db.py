@@ -102,23 +102,21 @@ for (path, dirs, files) in os.walk(mlit_path):
 
         if image.get_type() is image.get_undefined_type(): continue
 
-        image_key = RdsImage.get_key(artist, album, image.get_type())
-        image_filenameid_key = RdsImage.get_filenameid_key(image_key)
-        image_type_key = RdsImage.get_type_key(image_key)
-        image_dims_key = RdsImage.get_dims_key(image_key)
+        i = {
+            'type': image.get_type(),
+            'dimx': image.get_dimx(),
+            'dimy': image.get_dimx(),
+            'filenameid': image.get_filename_id((album_id3['artist'], album_id3['album']), image.get_type()),
+        }
 
-        image_filenameid = image.get_filename_id((album_id3['artist'], album_id3['album']), image.get_type())
+        image_key = RdsImage.get_key(artist, album, image.get_type())
+        for key, value in i.iteritems():
+            redis.hset(image_key, key, value)
 
         redis.sadd(album_images_key, image_key)
-
         redis.sadd(images_key, image_key) #track and add all images
 
-        redis.set(image_filenameid_key, image_filenameid)
-        redis.set(image_type_key, image.get_type())
-        for key, value in image.get_dims().iteritems():
-            redis.hset(image_dims_key, key, value)
-
-        shutil.copyfile(image.get_f(), os.path.join(mlii_path, image_filenameid))
+        shutil.copyfile(image.get_f(), os.path.join(mlii_path, i['filenameid']))
 
 albums_keys = redis.smembers(albums_key)
 tunes_keys = redis.smembers(tunes_key)
